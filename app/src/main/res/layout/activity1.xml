@@ -4,4 +4,24 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+
+    <EditText
+        android:id="@+id/TextToSend"
+        android:layout_width="match_parent"
+        android:layout_height="189dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name" />
+
+    <TextView
+        android:id="@+id/ResponseText"
+        android:layout_width="match_parent"
+        android:layout_height="162dp"
+        android:text="TextView" />
+
+    <Button
+    android:id="@+id/buttonActivity1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Button" />
 </LinearLayout>

@@ -11,4 +11,7 @@
     <string name="buttonActivity3">Activité 3</string>
     <string name="buttonActivity4">Activité 4</string>
     <string name="buttonActivity5">Activité 5</string>
+    <string name="writeTextActivity1">Ecris ton text</string>
+    <string name="ReadTextActivity1">Réponse du server</string>
+    <string name="ButtonSendTextActivity1">Envoyer</string>
 </resources>

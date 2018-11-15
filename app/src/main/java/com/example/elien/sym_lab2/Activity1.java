@@ -1,6 +1,5 @@
 package com.example.elien.sym_lab2;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,16 +9,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
-public class Activity1 extends AppCompatActivity {
+
+
+public class Activity1 extends AppCompatActivity implements CommunicationEventListenerString {
     private TextView email = null;
     private TextView imei = null;
     private ImageView image = null;
@@ -39,28 +37,32 @@ public class Activity1 extends AppCompatActivity {
         responseText = findViewById(R.id.ResponseText);
 
 
-        final String message = "";
         Button mClickButtonActivity1 = findViewById(R.id.buttonActivity1);
 
         mClickButtonActivity1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                new AsyncSendRequest().execute(message);
+                String message = textToSend.getText().toString();
+                new AsyncSendRequest(Activity1.this).execute(message);
             }
         });
     }
 
-    void setCommunicationEventListener(CommunicationEventListener l){
-        //Todo
-        //cette methode sera appelé lorsqu'asychsendRequest aura recu une réponse
-
-
+    @Override
+    public void handleServerResponse(String response) {
+        responseText.setText(response);
     }
 
 }
 
 class AsyncSendRequest extends AsyncTask<String, Void, String> {
+
+    AsyncSendRequest(CommunicationEventListenerString l){
+        cel = l;
+    }
+
+    CommunicationEventListenerString cel = null;
+
     protected String doInBackground(String... strings) {
         URL url = null;
         HttpURLConnection urlConnection = null;
@@ -85,13 +87,13 @@ class AsyncSendRequest extends AsyncTask<String, Void, String> {
             // read from the urlconnection via the bufferedreader
             while ((line = bufferedReader.readLine()) != null)
             {
-
                 content.append(line + "\n");
                 System.out.println(line);
             }
             bufferedReader.close();
 
 
+            cel.handleServerResponse(content.toString());
 
         } catch (Exception e) {
             e.printStackTrace();

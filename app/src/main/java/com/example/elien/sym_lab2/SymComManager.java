@@ -1,5 +1,5 @@
 package com.example.elien.sym_lab2;
 
 interface SymComManager {
-    void setCommunicationEventListener(CommunicationEventListener l);
+    void setCommunicationEventListener(CommunicationEventListenerString l);
 }

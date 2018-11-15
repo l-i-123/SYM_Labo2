@@ -11,17 +11,17 @@
         android:layout_height="189dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Name" />
+        android:text="@string/writeTextActivity1" />
 
     <TextView
         android:id="@+id/ResponseText"
         android:layout_width="match_parent"
         android:layout_height="162dp"
-        android:text="TextView" />
+        android:text="@string/ReadTextActivity1" />
 
     <Button
-    android:id="@+id/buttonActivity1"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="Button" />
+        android:id="@+id/buttonActivity1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/ButtonSendTextActivity1" />
 </LinearLayout>

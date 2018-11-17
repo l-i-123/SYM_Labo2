@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -102,6 +101,7 @@ class AsyncSendRequest2 extends AsyncTask<String, Void, String> {
             urlConnection.setRequestProperty("X-Network", "LTE");
 
 
+
             OutputStreamWriter writer = new OutputStreamWriter(
                     urlConnection.getOutputStream());
             writer.write(String.valueOf(strings[0]));
@@ -139,9 +139,9 @@ class AsyncSendRequest2 extends AsyncTask<String, Void, String> {
 
     }
 
-    private boolean isNetworkAvailable() {
+    private boolean isNetworkAvailable(Context ctx) {
         ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }

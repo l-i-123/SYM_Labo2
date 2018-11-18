@@ -175,12 +175,12 @@ class Post{
     String content;
 }
 
-class Data{
+class DataAct4{
     AllAuthors[] allAuthors;
 }
 
 class DataAuthors{
-    Data data;
+    DataAct4 data;
 }
 
 class DataContent{

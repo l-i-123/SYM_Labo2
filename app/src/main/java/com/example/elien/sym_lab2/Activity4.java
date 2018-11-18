@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -70,25 +71,27 @@ public class Activity4 extends AppCompatActivity implements CommunicationEventLi
                                     int position, long id) {
                 final String item = (String) parent.getItemAtPosition(position);
 
-                                stringResponse = "";
-                                String message = "{\"query\":\"{author(id: " + (getCategoryPos(item) + 1) + "){posts{title content}}}\"}";
-                                new AsyncSendRequest4(Activity4.this).execute(message);
-                                while(stringResponse == "");
+                    stringResponse = "";
+                    String message = "{\"query\":\"{author(id: " + (getCategoryPos(item) + 1) + "){posts{title content}}}\"}";
+                    new AsyncSendRequest4(Activity4.this).execute(message);
+                    while(stringResponse == ""){
+                        Log.d("Log Info","wait response");
+                    };
 
-                                DataContent content = gson.fromJson(stringResponse, DataContent.class);
+                    DataContent content = gson.fromJson(stringResponse, DataContent.class);
 
-                                StringBuilder builder = new StringBuilder();
-                                for (int i = 0; i < content.data.author.posts.length; ++i) {
-                                    Post temp = content.data.author.posts[i];
-                                    builder.append(temp.title + ":\n");
-                                    builder.append(temp.content + "\n\n");
-                                }
+                    StringBuilder builder = new StringBuilder();
+                    for (int i = 0; i < content.data.author.posts.length; ++i) {
+                        Post temp = content.data.author.posts[i];
+                        builder.append(temp.title + ":\n");
+                        builder.append(temp.content + "\n\n");
+                    }
 
-                                textView.setText(builder.toString());
+                    textView.setText(builder.toString());
 
-                                //name_list.remove(item);
-                                //adapter.notifyDataSetChanged();
-                                view.setAlpha(1);
+                    //name_list.remove(item);
+                    //adapter.notifyDataSetChanged();
+                    view.setAlpha(1);
 
             }
         });

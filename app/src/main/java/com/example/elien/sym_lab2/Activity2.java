@@ -58,6 +58,8 @@ public class Activity2 extends AppCompatActivity  implements CommunicationEventL
                 messages.add(textToSend.getText().toString());
                 if(isNetworkAvailable(Activity2.this) && waitConnection[0] == false){
                     Log.d("debug info", "2");
+                    Log.d("Lab3", "add message");
+                    Log.d("Lab3", "Taille de message" + messages.size());
                     new AsyncSendRequest2(Activity2.this).execute(messages);
                     //messages.clear();
                 }
@@ -89,6 +91,7 @@ public class Activity2 extends AppCompatActivity  implements CommunicationEventL
     public void handleServerResponse(String response) {
         responseText.setText(response);
         messages.remove(0);
+        Log.d("Lab3", "HandleServerResponse");
     }
 
 }
@@ -106,7 +109,8 @@ class AsyncSendRequest2 extends AsyncTask<ArrayList<String>, Void, String> {
         HttpURLConnection urlConnection = null;
         StringBuilder content = new StringBuilder();
         try {
-            for(int i = 0; i < strings[0].size(); i++){
+            int size = strings[0].size();
+            for(int i = 0; i < size; i++){
                 Log.d("debug info", "3");
                 url = new URL("http://sym.iict.ch/rest/txt");
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -118,7 +122,7 @@ class AsyncSendRequest2 extends AsyncTask<ArrayList<String>, Void, String> {
 
                 OutputStreamWriter writer = new OutputStreamWriter(
                         urlConnection.getOutputStream());
-                writer.write(String.valueOf(strings[0].get(i)));
+                writer.write(String.valueOf(strings[0].get(0)));
                 writer.flush();
 
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));

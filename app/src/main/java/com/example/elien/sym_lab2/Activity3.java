@@ -3,6 +3,7 @@ package com.example.elien.sym_lab2;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Xml;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,10 +14,13 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 
+import org.xmlpull.v1.XmlSerializer;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -25,9 +29,11 @@ public class Activity3 extends AppCompatActivity implements CommunicationEventLi
     private EditText name;
     private EditText surname;
     private EditText log;
-    private Switch isVegan;
+    private Switch isMajor;
     private RatingBar mark;
     private Button send;
+
+    private Switch sendJSON;
 
 
     private final int REQUEST_PERMISSION_PHONE_STATE = 1;
@@ -41,15 +47,20 @@ public class Activity3 extends AppCompatActivity implements CommunicationEventLi
         this.name = findViewById(R.id.name);
         this.surname = findViewById(R.id.surname);
         this.log = findViewById(R.id.Log);
-        this.isVegan = findViewById(R.id.isvegan);
+        this.isMajor = findViewById(R.id.ismajor);
         this.mark = findViewById(R.id.mark);
         this.send = findViewById(R.id.send);
+        this.sendJSON = findViewById(R.id.sendjson);
 
         this.send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AsyncSendRequestJSON(Activity3.this).execute(new Data(name.getText().toString(),
-                        surname.getText().toString(),isVegan.getShowText(),mark.getNumStars()));
+                if (sendJSON.isChecked())
+                    new AsyncSendRequestJSON(Activity3.this,true).execute(new Data(name.getText().toString(),
+                            surname.getText().toString(),isMajor.isChecked(),mark.getRating()));
+                else
+                    new AsyncSendRequestJSON(Activity3.this,false).execute(new Data(name.getText().toString(),
+                            surname.getText().toString(),isMajor.isChecked(),mark.getRating()));
             }
         });
     }
@@ -66,13 +77,13 @@ class Data implements Serializable {
 
     private String name;
     private String surname;
-    private boolean isvegan;
-    private int mark;
+    private boolean ismajor;
+    private float mark;
 
-    public Data(String name, String surname, boolean isvegan, int mark) {
+    public Data(String name, String surname, boolean ismajor, float mark) {
         this.name = name;
         this.surname = surname;
-        this.isvegan = isvegan;
+        this.ismajor = ismajor;
         this.mark = mark;
     }
 
@@ -94,17 +105,17 @@ class Data implements Serializable {
         this.surname = surname;
     }
 
-    public boolean isIsvegan() {
-        return isvegan;
+    public boolean getIsmajor() {
+        return ismajor;
     }
-    public void setIsvegan(boolean isvegan) {
-        this.isvegan = isvegan;
+    public void setIsmajor(boolean isvegan) {
+        this.ismajor = isvegan;
     }
 
-    public int getMark() {
+    public float getMark() {
         return mark;
     }
-    public void setMark(int mark) {
+    public void setMark(float mark) {
         this.mark = mark;
     }
 }
@@ -114,10 +125,12 @@ class Data implements Serializable {
 class AsyncSendRequestJSON extends AsyncTask<Serializable, Void, String> {
 
     CommunicationEventListenerString cell = null;
+    boolean sendJSON;
 
-    AsyncSendRequestJSON(CommunicationEventListenerString activity){
+    AsyncSendRequestJSON(CommunicationEventListenerString activity,boolean sendJSON){
 
         cell = activity;
+        this.sendJSON = sendJSON;
 
     }
 
@@ -126,22 +139,34 @@ class AsyncSendRequestJSON extends AsyncTask<Serializable, Void, String> {
         URL url = null;
         HttpURLConnection urlConnection = null;
         StringBuilder content = new StringBuilder();
-        String test;
+        String test = "";
+
         Gson gson = new Gson();
 
-
         try {
-            url = new URL("http://sym.iict.ch/rest/json");
-            urlConnection = (HttpURLConnection) url.openConnection();
+            if (sendJSON)
+                url = new URL("http://sym.iict.ch/rest/json");
+            else
+                url = new URL("http://sym.iict.ch/rest/xml");
 
+            urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setDoOutput(true);
             urlConnection.setRequestMethod("POST");
-            urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+
+            if (sendJSON)
+                urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            else
+                urlConnection.setRequestProperty("Content-Type", "application/xml; charset=utf-8");
 
             OutputStreamWriter writer = new OutputStreamWriter(
                     urlConnection.getOutputStream());
 
-            test = gson.toJson(strings[0]);
+            if (sendJSON)
+                test = gson.toJson(strings[0]);
+            else{
+                test = writeXml(strings[0]);
+            }
+
 
             writer.write(String.valueOf(test));
             writer.flush();
@@ -170,6 +195,49 @@ class AsyncSendRequestJSON extends AsyncTask<Serializable, Void, String> {
             urlConnection.disconnect();
         }
         return null;
+    }
+
+    private String writeXml(Serializable message){
+        XmlSerializer serializer = Xml.newSerializer();
+        StringWriter writer = new StringWriter();
+        Data msg = (Data) message;
+        try {
+            serializer.setOutput(writer);
+            serializer.startDocument("UTF-8", null);
+            serializer.docdecl(" directory SYSTEM \"http://sym.iict.ch/directory.dtd\"");
+
+            serializer.startTag("", "directory");
+            serializer.startTag("", "person");
+
+            serializer.startTag("", "name");
+            serializer.text(msg.getName());
+            serializer.endTag("", "name");
+
+            serializer.startTag("", "firstname");
+            serializer.text(msg.getSurname());
+            serializer.endTag("", "firstname");
+
+            serializer.startTag("", "gender");
+            if(msg.getIsmajor())
+                serializer.text("Male");
+            else
+                serializer.text("Female");
+
+            serializer.endTag("", "gender");
+
+            serializer.startTag("", "phone");
+            serializer.attribute("","type","home");
+            serializer.text("+41 09876543");
+            serializer.endTag("", "phone");
+
+            serializer.endTag("", "person");
+            serializer.endTag("", "directory");
+            serializer.endDocument();
+
+            return writer.toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

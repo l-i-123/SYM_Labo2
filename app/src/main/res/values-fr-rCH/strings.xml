@@ -14,5 +14,6 @@
     <string name="writeTextActivity1">Ecris ton text</string>
     <string name="ReadTextActivity1">Réponse du server</string>
     <string name="ButtonSendTextActivity1">Envoyer</string>
+    <string name="ReadTextActivity2">Numbre de message en attente</string>
     <string name="Activity5Title">Choisisset le nombre d objet a envoyer</string>
 </resources>

@@ -16,7 +16,7 @@
         android:id="@+id/ResponseTextActivity2"
         android:layout_width="match_parent"
         android:layout_height="162dp"
-        android:text="@string/ReadTextActivity1" />
+        android:text="@string/ReadTextActivity2" />
 
     <Button
         android:id="@+id/buttonActivity2"

@@ -45,7 +45,6 @@ public class Activity2 extends AppCompatActivity  implements CommunicationEventL
 
 
         Button mClickButtonActivity2 = findViewById(R.id.buttonActivity2);
-        Log.d("debug info", "0");
 
         final boolean[] waitConnection = {false};
 
@@ -57,9 +56,6 @@ public class Activity2 extends AppCompatActivity  implements CommunicationEventL
                 Log.d("debug info", "1");
                 messages.add(textToSend.getText().toString());
                 if(isNetworkAvailable(Activity2.this) && waitConnection[0] == false){
-                    Log.d("debug info", "2");
-                    Log.d("Lab3", "add message");
-                    Log.d("Lab3", "Taille de message" + messages.size());
                     new AsyncSendRequest2(Activity2.this).execute(messages);
                     //messages.clear();
                 }
@@ -69,7 +65,12 @@ public class Activity2 extends AppCompatActivity  implements CommunicationEventL
                         @Override
                         public void run() {
                             while(!isNetworkAvailable(Activity2.this)){
-
+                                try {
+                                    responseText.setText("Nombre de message en attente : " + messages.size());
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
                             }
                             new AsyncSendRequest2(Activity2.this).execute(messages);
                             waitConnection[0] = false;
@@ -89,7 +90,6 @@ public class Activity2 extends AppCompatActivity  implements CommunicationEventL
 
     @Override
     public void handleServerResponse(String response) {
-        responseText.setText(response);
         messages.remove(0);
         Log.d("Lab3", "HandleServerResponse");
     }

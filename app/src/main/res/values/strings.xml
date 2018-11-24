@@ -13,6 +13,7 @@
     <string name="activity5">Activity 5</string>
     <string name="writeTextActivity1">Write your texte</string>
     <string name="ReadTextActivity1">Response from server</string>
+    <string name="ReadTextActivity2">Number of waiting message</string>
     <string name="ButtonSendTextActivity1">Send your text</string>
     <string name="Activity5Title">Select number of object to send</string>
 </resources>

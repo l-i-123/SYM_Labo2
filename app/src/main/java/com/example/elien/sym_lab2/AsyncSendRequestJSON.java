@@ -9,77 +9,148 @@ import com.google.gson.Gson;
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.zip.Deflater;
+import java.util.zip.DeflaterInputStream;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
 
 class AsyncSendRequestJSON extends AsyncTask<Serializable, Void, String> {
 
     CommunicationEventListenerString cell = null;
     boolean sendJSON;
+    boolean deflateMode;  // Used only with JSON
 
     AsyncSendRequestJSON(CommunicationEventListenerString activity,boolean sendJSON){
 
         cell = activity;
         this.sendJSON = sendJSON;
+        this.deflateMode = false;
 
     }
 
+
+    public void setDeflateMode(boolean deflateMode) {
+        this.deflateMode = deflateMode;
+    }
 
     protected String doInBackground(Serializable... strings) {
         URL url = null;
         HttpURLConnection urlConnection = null;
         StringBuilder content = new StringBuilder();
+        OutputStreamWriter writer;
         String test = "";
 
         Gson gson = new Gson();
 
         try {
-            if (sendJSON)
+
+            if (deflateMode && sendJSON){
+
+
                 url = new URL("http://sym.iict.ch/rest/json");
-            else
-                url = new URL("http://sym.iict.ch/rest/xml");
 
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setDoOutput(true);
-            urlConnection.setRequestMethod("POST");
-
-            if (sendJSON)
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoOutput(true);
+                urlConnection.setRequestMethod("POST");
                 urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-            else
-                urlConnection.setRequestProperty("Content-Type", "application/xml; charset=utf-8");
+                urlConnection.setRequestProperty("X-Content-Encoding","deflate");
+                urlConnection.setRequestProperty("X-Network","CSD");
 
-            OutputStreamWriter writer = new OutputStreamWriter(
-                    urlConnection.getOutputStream());
+                for (Serializable str : strings){
+                    test += gson.toJson(str);
+                }
 
-            if (sendJSON)
-                test = gson.toJson(strings[0]);
-            else{
-                test = writeXml(strings[0]);
-            }
+                // Compress the bytes
+                DeflaterOutputStream outputStream = new DeflaterOutputStream(urlConnection.getOutputStream(),
+                        new Deflater(9,true));
+                outputStream.write(test.getBytes(), 0, test.getBytes().length);
+                outputStream.close();
+
+                //Read and decompress the data
+                byte[] readBuffer = new byte[5000];
+                InflaterInputStream inputStream = new InflaterInputStream(urlConnection.getInputStream(),
+                        new Inflater(true));
+                int read = inputStream.read(readBuffer);
+
+                byte[] result = Arrays.copyOf(readBuffer, read);
+
+                // Decode the bytes into a String
+                String ans = new String(result, "UTF-8");
+
+                //
+                if (cell != null){
+                    cell.handleServerResponse(test.getBytes().length + "/" + read);
+                }
+
+                outputStream.close();
+                inputStream.close();
 
 
-            writer.write(String.valueOf(test));
-            writer.flush();
+            }else{
 
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                if (sendJSON){
 
-            String line;
+                    url = new URL("http://sym.iict.ch/rest/json");
 
-            // read from the ele
-            // via the bufferedreader
-            while ((line = bufferedReader.readLine()) != null)
-            {
-                content.append(line + "\n");
-                System.out.println(line);
-            }
-            bufferedReader.close();
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setDoOutput(true);
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
-            if (cell != null){
-                cell.handleServerResponse(content.toString());
+                    writer = new OutputStreamWriter(
+                            urlConnection.getOutputStream());
+
+                    for (Serializable str : strings){
+                        test += gson.toJson(str);
+                    }
+
+                }else{
+                    url = new URL("http://sym.iict.ch/rest/xml");
+
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setDoOutput(true);
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setRequestProperty("Content-Type", "application/xml; charset=utf-8");
+
+                    writer = new OutputStreamWriter(
+                            urlConnection.getOutputStream());
+
+                    for (Serializable str : strings){
+                        test += writeXml(str);
+                    }
+
+                }
+
+                writer.write(String.valueOf(test));
+                writer.flush();
+
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+
+                String line;
+                // read from the ele
+                // via the bufferedreader
+                while ((line = bufferedReader.readLine()) != null)
+                {
+                    content.append(line + "\n");
+                    System.out.println(line);
+                }
+                bufferedReader.close();
+
+                if (cell != null){
+                    cell.handleServerResponse(content.toString());
+                }
+
             }
 
         } catch (Exception e) {

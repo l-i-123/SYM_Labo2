@@ -15,5 +15,6 @@
     <string name="ReadTextActivity1">Réponse du server</string>
     <string name="ButtonSendTextActivity1">Envoyer</string>
     <string name="ReadTextActivity2">Numbre de message en attente</string>
-    <string name="Activity5Title">Choisisset le nombre d objet a envoyer</string>
+    <string name="Activity5Title">Choisissez le nombre d objet a envoyer</string>
+    <string name="Compressed">Envoye l objet compresse ?</string>
 </resources>

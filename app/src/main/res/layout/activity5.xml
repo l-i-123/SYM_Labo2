@@ -18,6 +18,12 @@
         android:ems="10"
         android:inputType="number" />
 
+    <CheckBox
+        android:id="@+id/compressed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Compressed" />
+
     <Button
         android:id="@+id/send"
         android:layout_width="match_parent"
@@ -27,8 +33,15 @@
     <EditText
         android:id="@+id/Log"
         android:layout_width="match_parent"
-        android:layout_height="318dp"
+        android:layout_height="291dp"
         android:ems="10"
         android:inputType="textMultiLine" />
+
+    <EditText
+        android:id="@+id/curr_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="time" />
 
 </LinearLayout>

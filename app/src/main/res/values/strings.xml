@@ -16,4 +16,5 @@
     <string name="ReadTextActivity2">Number of waiting message</string>
     <string name="ButtonSendTextActivity1">Send your text</string>
     <string name="Activity5Title">Select number of object to send</string>
+    <string name="Compressed">Send object compressed ?</string>
 </resources>

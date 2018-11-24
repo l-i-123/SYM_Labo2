@@ -1,5 +1,8 @@
 package com.example.elien.sym_lab2;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +16,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.net.URL;
 
 
@@ -55,6 +60,7 @@ public class Activity1 extends AppCompatActivity implements CommunicationEventLi
 
 }
 
+
 class AsyncSendRequest extends AsyncTask<String, Void, String> {
 
     AsyncSendRequest(CommunicationEventListenerString l){
@@ -67,33 +73,50 @@ class AsyncSendRequest extends AsyncTask<String, Void, String> {
         URL url = null;
         HttpURLConnection urlConnection = null;
         StringBuilder content = new StringBuilder();
+        BufferedReader bufferedReader = null;
         try {
             url = new URL("http://sym.iict.ch/rest/txt");
             urlConnection = (HttpURLConnection) url.openConnection();
+
 
             urlConnection.setDoOutput(true);
             urlConnection.setRequestMethod("POST");
             urlConnection.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
 
-            OutputStreamWriter writer = new OutputStreamWriter(
-                    urlConnection.getOutputStream());
-            writer.write(String.valueOf(strings[0]));
-            writer.flush();
+            InetAddress adresse = InetAddress.getByName("sym.iict.ch");
+            Socket socket = new Socket(adresse.getHostAddress(), 80);
+            if(socket.isConnected()){
+                OutputStreamWriter writer = new OutputStreamWriter(
+                        urlConnection.getOutputStream());
+                writer.write(String.valueOf(strings[0]));
+                writer.flush();
 
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                int responseCode = urlConnection.getResponseCode();
+                if (responseCode >= 400 && responseCode <= 499) {
+                    content.append("Bad request");
+                }
+                else {
+                    bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    String line;
 
-            String line;
+                    // read from the urlconnection via the bufferedreader
+                    while ((line = bufferedReader.readLine()) != null)
+                    {
+                        content.append(line + "\n");
+                        System.out.println(line);
+                    }
+                    bufferedReader.close();
+                }
 
-            // read from the urlconnection via the bufferedreader
-            while ((line = bufferedReader.readLine()) != null)
-            {
-                content.append(line + "\n");
-                System.out.println(line);
             }
-            bufferedReader.close();
+            else{
+                content.append("Server unavailible\n");
+            }
+
 
 
             cel.handleServerResponse(content.toString());
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -103,7 +126,6 @@ class AsyncSendRequest extends AsyncTask<String, Void, String> {
         }
         return null;
     }
-
 
     protected void onProgressUpdate(Integer... progress) {
 

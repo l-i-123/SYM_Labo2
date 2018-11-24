@@ -57,7 +57,6 @@ public class Activity2 extends AppCompatActivity  implements CommunicationEventL
                 messages.add(textToSend.getText().toString());
                 if(isNetworkAvailable(Activity2.this) && waitConnection[0] == false){
                     new AsyncSendRequest2(Activity2.this).execute(messages);
-                    //messages.clear();
                 }
                 else if(waitConnection[0] == false){
                     waitConnection[0] = true;
@@ -125,20 +124,8 @@ class AsyncSendRequest2 extends AsyncTask<ArrayList<String>, Void, String> {
                 writer.write(String.valueOf(strings[0].get(0)));
                 writer.flush();
 
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
 
-                String line;
-
-                // read from the urlconnection via the bufferedreader
-                while ((line = bufferedReader.readLine()) != null)
-                {
-                    content.append(line + "\n");
-                    System.out.println(line);
-                }
-                bufferedReader.close();
-
-
-                cel.handleServerResponse(content.toString());
+                cel.handleServerResponse("");
             }
         } catch (Exception e) {
             e.printStackTrace();

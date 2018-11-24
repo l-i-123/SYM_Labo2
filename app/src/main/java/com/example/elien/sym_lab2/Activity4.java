@@ -89,8 +89,6 @@ public class Activity4 extends AppCompatActivity implements CommunicationEventLi
 
                     textView.setText(builder.toString());
 
-                    //name_list.remove(item);
-                    //adapter.notifyDataSetChanged();
                     view.setAlpha(1);
 
             }

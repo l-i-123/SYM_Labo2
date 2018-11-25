@@ -45,17 +45,25 @@ public class Activity5 extends AppCompatActivity implements CommunicationEventLi
             @Override
             public void onClick(View v) {
 
+                // Get nb object to create
+                int count = Integer.parseInt(nbobject.getText().toString());
+
+                // Create the request handler
                 req = new AsyncSendRequestJSON(Activity5.this,true);
 
+                // Check if we want to send in deflate mode
                 if(ckb.isChecked())
                     req.setDeflateMode(true);
 
-                for (int i = 0; i < Integer.parseInt(nbobject.getText().toString()); i++){
+                // Create number of default object
+                for (int i = 0; i < count; i++){
                     array.add(new Data("Jean-Jeremy-Benjamin","Von den bergen", true, i % 8));
                 }
 
+                // Start timer
                 currentTime = Calendar.getInstance().getTime().getTime();
 
+                // Start asynch task
                 req.execute(array);
 
             }

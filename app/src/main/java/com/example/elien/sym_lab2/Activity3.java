@@ -38,9 +38,11 @@ public class Activity3 extends AppCompatActivity implements CommunicationEventLi
             @Override
             public void onClick(View v) {
                 if (sendJSON.isChecked())
+                    // Send request with JSON
                     new AsyncSendRequestJSON(Activity3.this,true).execute(new Data(name.getText().toString(),
                             surname.getText().toString(),isMajor.isChecked(),mark.getRating()));
                 else
+                    // Send request with XML
                     new AsyncSendRequestJSON(Activity3.this,false).execute(new Data(name.getText().toString(),
                             surname.getText().toString(),isMajor.isChecked(),mark.getRating()));
             }

@@ -18,6 +18,7 @@ import java.util.zip.InflaterInputStream;
 
 class AsyncSendRequestJSON extends AsyncTask<Serializable, Void, String> {
 
+    // answer handler
     CommunicationEventListenerString cell = null;
     boolean sendJSON;
     boolean deflateMode;  // Used only with JSON
@@ -42,22 +43,24 @@ class AsyncSendRequestJSON extends AsyncTask<Serializable, Void, String> {
         OutputStreamWriter writer;
         String test = "";
 
-        Gson gson = new Gson();
-
         try {
 
             if (deflateMode && sendJSON){
 
+                // Create json builder
+                Gson gson = new Gson();
 
+                // Open connection
                 url = new URL("http://sym.iict.ch/rest/json");
-
                 urlConnection = (HttpURLConnection) url.openConnection();
+                // Set headers
                 urlConnection.setDoOutput(true);
                 urlConnection.setRequestMethod("POST");
                 urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
                 urlConnection.setRequestProperty("X-Content-Encoding","deflate");
                 urlConnection.setRequestProperty("X-Network","CSD");
 
+                // Create payload
                 for (Serializable str : strings){
                     test += gson.toJson(str);
                 }
@@ -74,8 +77,6 @@ class AsyncSendRequestJSON extends AsyncTask<Serializable, Void, String> {
                         new Inflater(true));
                 int read = inputStream.read(readBuffer);
 
-
-
                 // Return the number of bytes read
                 if (cell != null){
                     cell.handleServerResponse(readBuffer.toString());
@@ -89,45 +90,50 @@ class AsyncSendRequestJSON extends AsyncTask<Serializable, Void, String> {
 
                 if (sendJSON){
 
-                    url = new URL("http://sym.iict.ch/rest/json");
+                    // Create json builder
+                    Gson gson = new Gson();
 
+                    // Open connection
+                    url = new URL("http://sym.iict.ch/rest/json");
                     urlConnection = (HttpURLConnection) url.openConnection();
+                    // Set headers
                     urlConnection.setDoOutput(true);
                     urlConnection.setRequestMethod("POST");
                     urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
-                    writer = new OutputStreamWriter(
-                            urlConnection.getOutputStream());
-
+                    // Create payload
                     for (Serializable str : strings){
                         test += gson.toJson(str);
                     }
 
                 }else{
+                    // Open connection
                     url = new URL("http://sym.iict.ch/rest/xml");
-
                     urlConnection = (HttpURLConnection) url.openConnection();
+                    // Set headers
                     urlConnection.setDoOutput(true);
                     urlConnection.setRequestMethod("POST");
                     urlConnection.setRequestProperty("Content-Type", "application/xml; charset=utf-8");
 
-                    writer = new OutputStreamWriter(
-                            urlConnection.getOutputStream());
-
+                    // Create PAyload
                     for (Serializable str : strings){
                         test += writeXml(str);
                     }
 
                 }
+                // Get stream
+                writer = new OutputStreamWriter(
+                        urlConnection.getOutputStream());
 
+                // Write payload
                 writer.write(String.valueOf(test));
                 writer.flush();
 
+                // Get answer stream
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
 
                 String line;
-                // read from the ele
-                // via the bufferedreader
+                // Read answer
                 while ((line = bufferedReader.readLine()) != null)
                 {
                     content.append(line + "\n");
@@ -135,6 +141,7 @@ class AsyncSendRequestJSON extends AsyncTask<Serializable, Void, String> {
                 }
                 bufferedReader.close();
 
+                // Send to answer handler
                 if (cell != null){
                     cell.handleServerResponse(content.toString());
                 }

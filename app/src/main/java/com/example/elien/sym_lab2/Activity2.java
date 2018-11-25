@@ -90,6 +90,7 @@ public class Activity2 extends AppCompatActivity  implements CommunicationEventL
     @Override
     public void handleServerResponse(String response) {
         messages.remove(0);
+        responseText.setText("Nombre de message en attente : " + messages.size());
         Log.d("Lab3", "HandleServerResponse");
     }
 

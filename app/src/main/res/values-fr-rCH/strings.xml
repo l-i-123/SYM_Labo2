@@ -17,4 +17,13 @@
     <string name="ReadTextActivity2">Numbre de message en attente</string>
     <string name="Activity5Title">Choisissez le nombre d objet a envoyer</string>
     <string name="Compressed">Envoye l objet compresse ?</string>
+
+    <string name="activity3Name">Nom</string>
+    <string name="activity3Surname">Prenom</string>
+    <string name="activity3isMajor">Etes vous majeur ?</string>
+    <string name="activity3rate">Quel note est-ce que vous donnez ?</string>
+    <string name="activity3SendJson">Envoie du JSON si coche</string>
+    <string name="activity3Send">Envoyer</string>
+
+    <string name="activity5Nb">inserer nb ici</string>
 </resources>

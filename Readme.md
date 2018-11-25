@@ -56,3 +56,47 @@ a: Il est du coup nécessaire de faire le test des différents valeurs "à la ma
 b: Oui cela semble complètement envisageable d'utiliser un mécanisme de type protocole buffer à travers HTTP. Les avantages sont : le stream généré est plus petit que si l'on utilise XML ou JSON. Le parseurs de données est plus rapide, le mécanisme permet de générer un API spécifique pour chaque type que de données que l'on veut transférer. cependant, les protocoles buffers semblent plus compliquer à mettre en place qu'un format XML, dans le sens qu'il faut faire une étape de préparation plus importante pour décrire les structures. Mais cela semble plus simple à utiliser dans un second temps. Cela semble moins répandu que le XML ou le JSON mais le langage de description sur lequel il se base est soutenu par Google.
 
 c: Une des améliorations possible pour l'utilisation sur mobile serai de pouvoir faire des requêtes par tranche d'id. Cela aurai permis de ne pas charger tous les auteurs à afficher en une fois ou de devoir charger id après id au fils de défilement de la liste (ce qui prend du temps) mais de les charger par paquet de 10 ou 20 afin d'avoir un juste milieu
+
+#### 4.6 Transmission compressée 
+
+**Observation des trames avec wireshark :**
+
+**Envoie de 5 objets JSON :**
+
+**non compressé:**
+
+![sym8](/Users/Maxime/Desktop/sym8.png)
+
+![sym1](/Users/Maxime/Desktop/sym1.png)
+
+
+
+**compressé:**
+
+![sym2](/Users/Maxime/Desktop/sym2.png)
+
+![sym3](/Users/Maxime/Desktop/sym3.png)
+
+**Envoie de 10 objets JSON :**
+
+**non compressé:**
+
+![sym4](/Users/Maxime/Desktop/sym4.png)
+
+![sym5](/Users/Maxime/Desktop/sym5.png)
+
+**compressé:**
+
+![sym6](/Users/Maxime/Desktop/sym6.png)
+
+![sym7](/Users/Maxime/Desktop/sym7.png)
+
+##### Résumé:
+
+|                   | Non compressé | Compressé | Gain  |
+| ----------------- | ------------- | --------- | ----- |
+| 5 objets POST     | 2466          | 124       | 19.89 |
+| 5 objets Réponse  | 3273          | 592       | 5.53  |
+| 10 objets POST    | 3741          | 145       | 25.8  |
+| 10 objets Réponse | 4518          | 618       | 7.31  |
+

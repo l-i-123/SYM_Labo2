@@ -17,4 +17,14 @@
     <string name="ButtonSendTextActivity1">Send your text</string>
     <string name="Activity5Title">Select number of object to send</string>
     <string name="Compressed">Send object compressed ?</string>
+
+    <string name="activity3Name">Name</string>
+    <string name="activity3Surname">Surname</string>
+    <string name="activity3isMajor">Are you major?</string>
+    <string name="activity3rate">What s your rating ?</string>
+    <string name="activity3SendJson">if checked send json</string>
+    <string name="activitySend">Send</string>
+
+    <string name="activity5Nb">Put nb here</string>
+
 </resources>

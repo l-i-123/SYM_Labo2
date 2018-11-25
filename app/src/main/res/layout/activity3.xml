@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="name"
+        android:hint="@string/activity3Name"
         android:inputType="textPersonName" />
 
     <EditText
@@ -18,20 +18,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="surname"
+        android:hint="@string/activity3Surname"
         android:inputType="textPersonName" />
 
     <Switch
         android:id="@+id/ismajor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Are you" />
+        android:text="@string/activity3isMajor" />
 
     <TextView
         android:id="@+id/ratingtext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Rate" />
+        android:text="@string/activity3rate" />
 
     <RatingBar
         android:id="@+id/mark"
@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:checked="false"
         android:splitTrack="false"
-        android:text="send json if activated, otherwise xml"
+        android:text="@string/activity3SendJson"
         android:textOff="false"
         android:textOn="true"
         tools:checked="false" />
@@ -53,7 +53,7 @@
         android:id="@+id/send"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Button" />
+        android:text="@string/activitySend" />
 
     <EditText
         android:id="@+id/Log"

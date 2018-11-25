@@ -1,26 +1,17 @@
 package com.example.elien.sym_lab2;
 
-
 import android.os.AsyncTask;
 import android.util.Xml;
-
 import com.google.gson.Gson;
-
 import org.xmlpull.v1.XmlSerializer;
-
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.zip.Deflater;
-import java.util.zip.DeflaterInputStream;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
@@ -83,9 +74,11 @@ class AsyncSendRequestJSON extends AsyncTask<Serializable, Void, String> {
                         new Inflater(true));
                 int read = inputStream.read(readBuffer);
 
+
+
                 // Return the number of bytes read
                 if (cell != null){
-                    cell.handleServerResponse("Message length : " + read);
+                    cell.handleServerResponse(readBuffer.toString());
                 }
 
                 outputStream.close();

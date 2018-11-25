@@ -16,6 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:hint="@string/activity5Nb"
         android:inputType="number" />
 
     <CheckBox
@@ -28,7 +29,7 @@
         android:id="@+id/send"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Button" />
+        android:text="@string/activitySend" />
 
     <EditText
         android:id="@+id/Log"

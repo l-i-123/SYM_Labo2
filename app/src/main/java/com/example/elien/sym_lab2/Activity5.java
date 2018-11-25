@@ -8,17 +8,18 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 
 public class Activity5 extends AppCompatActivity implements CommunicationEventListenerString{
-    private TextView title = null;
     private EditText nbobject = null;
     private EditText log = null;
     private EditText time = null;
     private Button send = null;
     private CheckBox ckb = null;
+    private TextView title = null;
 
     private  AsyncSendRequestJSON req = null;
 
@@ -56,17 +57,18 @@ public class Activity5 extends AppCompatActivity implements CommunicationEventLi
                 currentTime = Calendar.getInstance().getTime().getTime();
 
                 req.execute(array);
-                //new AsyncSendRequestJSON(Activity3.this,true).execute(new Data(name.getText().toString(),
-                //        surname.getText().toString(),isMajor.isChecked(),mark.getRating()));
+
             }
         });
     }
 
     @Override
-    public void handleServerResponse(String response) {
+    public void handleServerResponse(String respone) {
+
 
         time.setText("elapsed time" + ( Calendar.getInstance().getTime().getTime() - currentTime));
-        log.setText("Taille uncompressed / compressed : " + response);
+
+        log.setText(respone);
 
     }
 }

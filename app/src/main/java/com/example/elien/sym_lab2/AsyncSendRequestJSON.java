@@ -79,7 +79,7 @@ class AsyncSendRequestJSON extends AsyncTask<Serializable, Void, String> {
 
                 // Return the number of bytes read
                 if (cell != null){
-                    cell.handleServerResponse(readBuffer.toString());
+                    cell.handleServerResponse(new String(readBuffer));
                 }
 
                 outputStream.close();

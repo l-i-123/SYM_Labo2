@@ -26,9 +26,7 @@ public class Activity5 extends AppCompatActivity implements CommunicationEventLi
     private ArrayList<Data> array = new ArrayList<>();
 
     private long currentTime;
-
-
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,8 +43,14 @@ public class Activity5 extends AppCompatActivity implements CommunicationEventLi
             @Override
             public void onClick(View v) {
 
+                int count;
                 // Get nb object to create
-                int count = Integer.parseInt(nbobject.getText().toString());
+                if (nbobject.getText().toString().equals("")){
+                    count = 1;
+                }else{
+                    count = Integer.parseInt(nbobject.getText().toString());
+                }
+
 
                 // Create the request handler
                 req = new AsyncSendRequestJSON(Activity5.this,true);

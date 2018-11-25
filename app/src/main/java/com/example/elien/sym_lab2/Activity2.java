@@ -13,8 +13,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -22,16 +20,10 @@ import java.util.ArrayList;
 
 
 public class Activity2 extends AppCompatActivity  implements CommunicationEventListenerString{
-    private TextView email = null;
-    private TextView imei = null;
-    private ImageView image = null;
-
 
     EditText textToSend;
     TextView responseText;
 
-    private final int REQUEST_PERMISSION_PHONE_STATE = 1;
-    private final int REQUEST_ACCESS_NETWORK_STATE = 1;
     final ArrayList<String> messages = new ArrayList<>();
 
     @Override
@@ -48,14 +40,20 @@ public class Activity2 extends AppCompatActivity  implements CommunicationEventL
 
         final boolean[] waitConnection = {false};
 
+        //Envoie du texte lors de l'appui sur le bouton de l'interface graphique
         mClickButtonActivity2.setOnClickListener(new View.OnClickListener() {
 
 
             @Override
             public void onClick(View v) {
                 Log.d("debug info", "1");
+
+                //Ajout du nouveau message dans la liste de message
                 messages.add(textToSend.getText().toString());
+
+                //Vérification de la disponibilité du réseau
                 if(isNetworkAvailable(Activity2.this) && waitConnection[0] == false){
+                    //si le réseau est disponible appel de la tâche asynchrone afin d'envoyer le message
                     new AsyncSendRequest2(Activity2.this).execute(messages);
                 }
                 else if(waitConnection[0] == false){
@@ -63,14 +61,17 @@ public class Activity2 extends AppCompatActivity  implements CommunicationEventL
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
+                            //Contrôle periodique de la disponibilité du réseau jusqu'à se qu'il revienne
                             while(!isNetworkAvailable(Activity2.this)){
                                 try {
+                                    //Affichage du nombre de message en attente
                                     responseText.setText("Nombre de message en attente : " + messages.size());
                                     Thread.sleep(1000);
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
                             }
+                            //Lorsque le réseau est de retour appel de la tâche d'envoie des message
                             new AsyncSendRequest2(Activity2.this).execute(messages);
                             waitConnection[0] = false;
                         }
@@ -80,6 +81,7 @@ public class Activity2 extends AppCompatActivity  implements CommunicationEventL
         });
     }
 
+    //méthode de vérification de la disponibilité du réseau
     private boolean isNetworkAvailable(Context ctx) {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -87,6 +89,8 @@ public class Activity2 extends AppCompatActivity  implements CommunicationEventL
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
+    //Lorsque la tâche asychrone donne sa réponse le message ets supprimé et le nombre de message
+    //en attente est mis à jour
     @Override
     public void handleServerResponse(String response) {
         messages.remove(0);
@@ -96,6 +100,8 @@ public class Activity2 extends AppCompatActivity  implements CommunicationEventL
 
 }
 
+//Equivalent à AsyncSendRequest de l'activité 1 mais envoie des message tant que la liste messages
+//n'est pas vide
 class AsyncSendRequest2 extends AsyncTask<ArrayList<String>, Void, String> {
 
     AsyncSendRequest2(CommunicationEventListenerString l){

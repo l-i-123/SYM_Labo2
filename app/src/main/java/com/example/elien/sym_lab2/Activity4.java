@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -18,14 +17,12 @@ import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
 public class Activity4 extends AppCompatActivity implements CommunicationEventListenerString{
 
-    private final int REQUEST_PERMISSION_PHONE_STATE = 1;
     String stringResponse = "";
     Gson gson = new Gson();
     ListView listView = null;
@@ -46,24 +43,29 @@ public class Activity4 extends AppCompatActivity implements CommunicationEventLi
         textView = findViewById(R.id.textViewActivity4);
         textView.setMovementMethod(new ScrollingMovementMethod());
 
-
+        //Envoie de la requete demandant la liste des id, nom et prénom de tous les auteurs
         String message = "{\"query\":\"{allAuthors{id first_name last_name}}\"}";
         new AsyncSendRequest4(Activity4.this).execute(message);
 
+        //Attente d'une réponse
         while(stringResponse == "");
-        System.out.println(stringResponse);
+
+        //Converion du json reçu vers la class DataAuthors
         DataAuthors authors = gson.fromJson(stringResponse, DataAuthors.class);
 
+        //Extraction de l'objet authors des prénom et nom de chaque auteur pour le mettre dans la
+        //list "name_lit"
         for (int i = 0; i < authors.data.allAuthors.length; ++i) {
             AllAuthors temp = authors.data.allAuthors[i];
             name_list.add(temp.first_name + " " + temp.last_name);
         }
 
+        //Ajout des données au list view
         final ArrayAdapter adapter = new ArrayAdapter(this,
                 android.R.layout.simple_list_item_1, name_list);
         listView.setAdapter(adapter);
-        boolean flag = false;
 
+        //lors de l'appuie sur un auteur se trouvant dans le liste view l'ensemble de ses ouvrages est chargé
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -71,25 +73,30 @@ public class Activity4 extends AppCompatActivity implements CommunicationEventLi
                                     int position, long id) {
                 final String item = (String) parent.getItemAtPosition(position);
 
-                    stringResponse = "";
-                    String message = "{\"query\":\"{author(id: " + (getCategoryPos(item) + 1) + "){posts{title content}}}\"}";
-                    new AsyncSendRequest4(Activity4.this).execute(message);
-                    while(stringResponse == ""){
-                        Log.d("Log Info","wait response");
-                    };
+                stringResponse = "";
 
-                    DataContent content = gson.fromJson(stringResponse, DataContent.class);
+                //Requête de récupération des publication d'un auteur via son id
+                String message = "{\"query\":\"{author(id: " + (getCategoryPos(item) + 1) + "){posts{title content}}}\"}";
+                new AsyncSendRequest4(Activity4.this).execute(message);
+                while(stringResponse == ""){
+                    Log.d("Log Info","wait response");
+                };
 
-                    StringBuilder builder = new StringBuilder();
-                    for (int i = 0; i < content.data.author.posts.length; ++i) {
-                        Post temp = content.data.author.posts[i];
-                        builder.append(temp.title + ":\n");
-                        builder.append(temp.content + "\n\n");
-                    }
+                //Conversion du json contenu dans stringResponse en object de type DataContent
+                DataContent content = gson.fromJson(stringResponse, DataContent.class);
 
-                    textView.setText(builder.toString());
+                //Contruction de la réponse
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < content.data.author.posts.length; ++i) {
+                    Post temp = content.data.author.posts[i];
+                    builder.append(temp.title + ":\n");
+                    builder.append(temp.content + "\n\n");
+                }
 
-                    view.setAlpha(1);
+                //Affichage des publication sur l'interface graphique
+                textView.setText(builder.toString());
+
+                view.setAlpha(1);
 
             }
         });
@@ -100,9 +107,7 @@ public class Activity4 extends AppCompatActivity implements CommunicationEventLi
     }
 }
 
-
-
-
+//Tâche asynchrone similaire à celle de l'activité 1
 class AsyncSendRequest4 extends AsyncTask<String, Void, String> {
 
     AsyncSendRequest4(CommunicationEventListenerString l){
@@ -132,7 +137,6 @@ class AsyncSendRequest4 extends AsyncTask<String, Void, String> {
 
             String line;
 
-            // read from the urlconnection via the bufferedreader
             while ((line = bufferedReader.readLine()) != null)
             {
                 content.append(line + "\n");
@@ -164,6 +168,7 @@ class AsyncSendRequest4 extends AsyncTask<String, Void, String> {
 }
 
 
+//Ensemble de classe permettant de convertire le Json reçu en objet
 
 class AllAuthors{
     String id;
@@ -189,7 +194,7 @@ class DataContent{
 }
 
 class DataAuthorPost{
-     AuthorPost author;
+    AuthorPost author;
 }
 
 class AuthorPost{

@@ -1,5 +1,10 @@
 package com.example.elien.sym_lab2;
 
+/**
+ * Created by Maxime Vulliens and Elie N'djoli
+ * on 20.11.18
+ */
+
 import android.os.AsyncTask;
 import android.util.Xml;
 import com.google.gson.Gson;

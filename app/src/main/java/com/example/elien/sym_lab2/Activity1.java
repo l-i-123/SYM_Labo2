@@ -1,5 +1,11 @@
 package com.example.elien.sym_lab2;
 
+/**
+ * Created by Maxime Vulliens and Elie N'djoli
+ * on 20.11.18
+ * Description : Activity 1
+ */
+
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

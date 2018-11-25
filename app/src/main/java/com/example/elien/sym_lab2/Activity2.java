@@ -1,5 +1,11 @@
 package com.example.elien.sym_lab2;
 
+/**
+ * Created by Maxime Vulliens and Elie N'djoli
+ * on 20.11.18
+ * Description : Activity 2
+ */
+
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;

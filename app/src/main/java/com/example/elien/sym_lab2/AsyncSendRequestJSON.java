@@ -83,14 +83,9 @@ class AsyncSendRequestJSON extends AsyncTask<Serializable, Void, String> {
                         new Inflater(true));
                 int read = inputStream.read(readBuffer);
 
-                byte[] result = Arrays.copyOf(readBuffer, read);
-
-                // Decode the bytes into a String
-                String ans = new String(result, "UTF-8");
-
-                //
+                // Return the number of bytes read
                 if (cell != null){
-                    cell.handleServerResponse(test.getBytes().length + "/" + read);
+                    cell.handleServerResponse("Message length : " + read);
                 }
 
                 outputStream.close();
